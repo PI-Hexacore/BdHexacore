@@ -1,10 +1,7 @@
-CREATE DATABASE hexacore;
-
+CREATE DATABASE if not exists hexacore;
 USE hexacore;
 
-
-
-CREATE TABLE Usuario (
+CREATE TABLE IF NOT EXISTS Usuario (
   id_usuario INT AUTO_INCREMENT PRIMARY KEY COMMENT 'Identificador único do usuário',
   nm_razao_social VARCHAR(45) NOT NULL COMMENT 'Razão social do usuário',
   nm_fantasia VARCHAR(45) NOT NULL COMMENT 'Nome fantasia',
@@ -14,8 +11,7 @@ CREATE TABLE Usuario (
   ds_senha VARCHAR(30) NOT NULL COMMENT 'Senha de acesso',
   cd_telefone CHAR(11) NOT NULL COMMENT 'Telefone de contato'
 );
-
-CREATE TABLE Endereco (
+CREATE TABLE IF NOT EXISTS Endereco (
   id_endereco INT AUTO_INCREMENT PRIMARY KEY COMMENT 'Identificador único do endereço',
   ds_tipo_logradouro VARCHAR(45) NOT NULL COMMENT 'Tipo de logradouro (Rua, Av, etc.)',
   nm_logradouro VARCHAR(45) DEFAULT NULL COMMENT 'Nome do logradouro',
@@ -28,7 +24,6 @@ CREATE TABLE Endereco (
   CONSTRAINT fk_Endereco_Usuario FOREIGN KEY (fk_usuario)
     REFERENCES Usuario (id_usuario)
 );
-
 CREATE TABLE IF NOT EXISTS SpotifyTop (
     id_spotify_top INT AUTO_INCREMENT PRIMARY KEY,
     nm_titulo VARCHAR(150) NOT NULL,
@@ -41,7 +36,6 @@ CREATE TABLE IF NOT EXISTS SpotifyTop (
     qt_stream INT NULL,
     ds_genero VARCHAR(45) NULL
 );
-
 CREATE TABLE IF NOT EXISTS SpotifyYoutube (
     id_spotify_youtube INT AUTO_INCREMENT PRIMARY KEY,
     nm_track VARCHAR(100) NULL,
@@ -51,8 +45,7 @@ CREATE TABLE IF NOT EXISTS SpotifyYoutube (
     nm_title VARCHAR(100) NULL,
     qt_stream INT NULL
 );
-
-CREATE TABLE DadosTratados (
+CREATE TABLE IF NOT EXISTS DadosTratados (
   fk_spotify_top INT NOT NULL,
   fk_spotify_youtube INT NOT NULL,
   nm_artista VARCHAR(100) NULL,
@@ -73,8 +66,7 @@ CREATE TABLE DadosTratados (
   CONSTRAINT fk_DadosTratados_SpotifyYoutube FOREIGN KEY (fk_spotify_youtube)
     REFERENCES SpotifyYoutube (id_spotify_youtube)
 );
-
-CREATE TABLE Artista (
+CREATE TABLE IF NOT EXISTS Artista (
   id_artista INT AUTO_INCREMENT PRIMARY KEY,
   nm_artista VARCHAR(100) NOT NULL,
   ds_genero_musical VARCHAR(45) DEFAULT NULL,
@@ -86,8 +78,7 @@ CREATE TABLE Artista (
   CONSTRAINT fk_Artista_DadosTratados FOREIGN KEY (fk_dados_spotify_top, fk_dados_spotify_youtube)
     REFERENCES DadosTratados (fk_spotify_top, fk_spotify_youtube)
 );
-
-CREATE TABLE Musica (
+CREATE TABLE IF NOT EXISTS Musica (
   id_musica INT AUTO_INCREMENT PRIMARY KEY,
   nm_track VARCHAR(150) DEFAULT NULL,
   nm_musica VARCHAR(100) NOT NULL,
@@ -104,8 +95,8 @@ CREATE TABLE Musica (
   CONSTRAINT fk_Musica_DadosTratados FOREIGN KEY (fk_dados_spotify_top, fk_dados_spotify_youtube)
     REFERENCES DadosTratados (fk_spotify_top, fk_spotify_youtube)
 );
+CREATE TABLE IF NOT EXISTS LogImportacao (
 
-CREATE TABLE LogImportacao (
     idLog INT AUTO_INCREMENT PRIMARY KEY,
     tabelaAlvo VARCHAR(50) NOT NULL, 
     statusLog VARCHAR(20) NOT NULL,  
@@ -113,9 +104,42 @@ CREATE TABLE LogImportacao (
     registrosInseridos INT DEFAULT 0, 
     mensagem TEXT NULL               
 );
-SELECT * FROM LogImportacao;
-SELECT * FROM SpotifyTop;
-SELECT * FROM SpotifyYoutube;
-SELECT * FROM DadosTratados;
-SELECT * FROM Musica;
-SELECT * FROM Artista;
+
+INSERT INTO Usuario (
+  nm_razao_social,
+  nm_fantasia,
+  cd_cnpj,
+  ds_email,
+  ds_senha,
+  cd_telefone
+)
+VALUES (
+  'SomPrime Produções Musicais LTDA',
+  'SomPrime Records',
+  '12345678000199',
+  'contato@somprime.com.br',
+  'sp2025music',
+  '11987654321'
+);
+
+INSERT INTO Endereco (
+  ds_tipo_logradouro,
+  nm_logradouro,
+  nr_logradouro,
+  nm_bairro,
+  nm_cidade,
+  sg_uf,
+  cd_cep,
+  fk_usuario
+)
+VALUES (
+  'Avenida',
+  'Paulista',
+  1578,
+  'Bela Vista',
+  'São Paulo',
+  'SP',
+  '01310100',
+  1
+);
+
