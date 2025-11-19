@@ -114,12 +114,12 @@ INSERT INTO Usuario (
   cd_telefone
 )
 VALUES (
-  'SomPrime Produções Musicais LTDA',
-  'SomPrime Records',
+  'HexaCore Consulting',
+  'Hexacore',
   '12345678000199',
-  'contato@somprime.com.br',
-  'sp2025music',
-  '11987654321'
+  'hexacore@email.com',
+  'A123456@',
+  '11969372801'
 );
 
 INSERT INTO Endereco (
@@ -133,13 +133,13 @@ INSERT INTO Endereco (
   fk_usuario
 )
 VALUES (
-  'Avenida',
-  'Paulista',
-  1578,
-  'Bela Vista',
+  'Rua',
+  'Haddock Lobo',
+  595,
+  'Cerqueira César',
   'São Paulo',
   'SP',
-  '01310100',
+  '01414001',
   1
 );
 
