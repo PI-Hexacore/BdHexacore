@@ -152,6 +152,11 @@ CREATE TABLE IF NOT EXISTS `Status` (
   PRIMARY KEY (`id_status`)
 ) ENGINE = InnoDB;
 
+INSERT INTO Status VALUES
+(1, "SUCESSO", "Ocorreu Corretamente"),
+(2, "PARCIAL", "Ocorreu Parcialmente"),
+(3, "FALHA", "Falhou");
+
 -- =========================================
 -- TABELA: LogImportacao
 -- (ajuste: idLog NOT NULL + AUTO_INCREMENT)
