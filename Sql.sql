@@ -157,13 +157,13 @@ CREATE TABLE IF NOT EXISTS `Status` (
 -- (ajuste: idLog NOT NULL + AUTO_INCREMENT)
 -- =========================================
 CREATE TABLE IF NOT EXISTS `LogImportacao` (
-  `idLog` INT NOT NULL AUTO_INCREMENT,
-  `tabelaAlvo` VARCHAR(50) NOT NULL,
-  `dtHoraLog` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
-  `registrosInseridos` INT NULL DEFAULT 0,
+  `id_log` INT NOT NULL AUTO_INCREMENT,
+  `tabela_alvo` VARCHAR(50) NOT NULL,
+  `dt_hora_log` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `registros_inseridos` INT NULL DEFAULT 0,
   `mensagem` TEXT NULL DEFAULT NULL,
   `id_status` INT NOT NULL,
-  PRIMARY KEY (`idLog`, `id_status`),
+  PRIMARY KEY (`id_log`, `id_status`),
   INDEX `fk_LogImportacao_Status1_idx` (`id_status` ASC),
   CONSTRAINT `fk_LogImportacao_Status1`
     FOREIGN KEY (`id_status`)
@@ -176,7 +176,7 @@ CREATE TABLE IF NOT EXISTS `LogImportacao` (
 -- TABELA: ArtistaGravadora
 -- =========================================
 CREATE TABLE IF NOT EXISTS `ArtistaGravadora` (
-  `id_artista` INT NOT NULL,
+  `id_artista` INT NOT NULL AUTO_INCREMENT,
   `nm_artista` VARCHAR(45) NULL,
   `ds_genero_musical` VARCHAR(45) NULL,
   `fk_id_usuario` INT NOT NULL,
@@ -217,63 +217,58 @@ CREATE TABLE IF NOT EXISTS `Artista` (
 -- =========================================
 -- TABELA: SlackAtivo
 -- =========================================
-CREATE TABLE IF NOT EXISTS `SlackAtivo` (
-  `id_slack_ativo` INT NOT NULL,
-  `status` TINYINT NULL,
-  `fk_usuario` INT NOT NULL,
-  PRIMARY KEY (`id_slack_ativo`, `fk_usuario`),
-  INDEX `fk_SlackAtivo_Usuario1_idx` (`fk_usuario` ASC),
-  CONSTRAINT `fk_SlackAtivo_Usuario1`
-    FOREIGN KEY (`fk_usuario`)
-    REFERENCES `Usuario` (`id_usuario`)
-    ON DELETE NO ACTION
-    ON UPDATE NO ACTION
-) ENGINE = InnoDB;
+CREATE TABLE SlackAtivo (
+    id_slack_ativo INT AUTO_INCREMENT PRIMARY KEY,
+    notificacoes_desativadas TINYINT DEFAULT 0,
+    receber_pais TINYINT DEFAULT 1,
+    receber_musica TINYINT DEFAULT 1,
+    receber_artista TINYINT DEFAULT 1,
+    fk_usuario INT NOT NULL,
+    FOREIGN KEY (fk_usuario) REFERENCES Usuario(id_usuario)
+);
 
 -- =========================================
 -- TABELA: SlackNotificacao
 -- (depende de LogImportacao e SlackAtivo já criadas)
 -- =========================================
-CREATE TABLE IF NOT EXISTS `SlackNotificacao` (
-  `id_slack_notificacao` INT NOT NULL,
-  `canal_slack` VARCHAR(45) NULL,
-  `mensagem` VARCHAR(45) NULL,
-  `status_envio` VARCHAR(45) NULL,
-  `dt_envio` DATETIME NULL,
-  `log_importacao_id` INT NOT NULL,
-  `log_importacao_id_status` INT NOT NULL,
-  `id_status_ativo` INT NOT NULL,
-  `fk_usuario` INT NOT NULL,
-  PRIMARY KEY (`id_slack_notificacao`, `id_status_ativo`, `fk_usuario`),
-  INDEX `fk_SlackNotificacao_LogImportacao1_idx` (`log_importacao_id` ASC, `log_importacao_id_status` ASC),
-  INDEX `fk_SlackNotificacao_SlackAtivo1_idx` (`id_status_ativo` ASC, `fk_usuario` ASC),
-  CONSTRAINT `fk_SlackNotificacao_LogImportacao1`
-    FOREIGN KEY (`log_importacao_id` , `log_importacao_id_status`)
-    REFERENCES `LogImportacao` (`idLog` , `id_status`)
-    ON DELETE NO ACTION
-    ON UPDATE NO ACTION,
-  CONSTRAINT `fk_SlackNotificacao_SlackAtivo1`
-    FOREIGN KEY (`id_status_ativo` , `fk_usuario`)
-    REFERENCES `SlackAtivo` (`id_slack_ativo` , `fk_usuario`)
-    ON DELETE NO ACTION
-    ON UPDATE NO ACTION
-) ENGINE = InnoDB;
+CREATE TABLE SlackNotificacao (
+    id_slack_notificacao INT AUTO_INCREMENT PRIMARY KEY,
+    canal_slack VARCHAR(95),
+    mensagem VARCHAR(255),
+    dt_envio DATETIME,
+    log_importacao_id INT,
+    log_importacao_id_status INT,
+    id_status_ativo INT,
+    fk_usuario INT NOT NULL,
+    FOREIGN KEY (fk_usuario) REFERENCES Usuario(id_usuario),
+    FOREIGN KEY (log_importacao_id) REFERENCES LogImportacao(id_log),
+    FOREIGN KEY (log_importacao_id_status) REFERENCES LogImportacao(id_status),
+    FOREIGN KEY (id_status_ativo) REFERENCES Status(id_status)
+);
 
 -- =========================================
 -- TABELA: FiltroDashboard
 -- =========================================
-CREATE TABLE IF NOT EXISTS `FiltroDashboard` (
-  `id_filtro` INT NOT NULL,
-  `nm_pais` VARCHAR(45) NULL,
-  `ds_genero` VARCHAR(45) NULL,
-  `qt_stream` INT NULL,
-  `tp_album` VARCHAR(45) NULL,
-  `fk_usuario` INT NOT NULL,
-  PRIMARY KEY (`id_filtro`, `fk_usuario`),
-  INDEX `fk_FiltroDashboard_Usuario1_idx` (`fk_usuario` ASC),
-  CONSTRAINT `fk_FiltroDashboard_Usuario1`
-    FOREIGN KEY (`fk_usuario`)
-    REFERENCES `Usuario` (`id_usuario`)
-    ON DELETE NO ACTION
-    ON UPDATE NO ACTION
-) ENGINE = InnoDB;
+
+CREATE TABLE FiltroDashboard (
+    id_filtro INT AUTO_INCREMENT PRIMARY KEY,
+    nm_filtro VARCHAR(100) NOT NULL,
+    tp_album VARCHAR(20),
+    fk_id_usuario INT NOT NULL,
+    FOREIGN KEY (fk_id_usuario) REFERENCES
+    Usuario(id_usuario)
+);
+
+CREATE TABLE FiltroPais (
+    id_filtro_pais INT AUTO_INCREMENT PRIMARY KEY,
+    fk_filtro INT NOT NULL,
+    nm_pais VARCHAR(50) NOT NULL,
+    FOREIGN KEY (fk_filtro) REFERENCES FiltroDashboard(id_filtro)
+);
+
+CREATE TABLE FiltroGenero (
+    id_filtro_genero INT AUTO_INCREMENT PRIMARY KEY,
+    fk_filtro INT NOT NULL,
+    ds_genero VARCHAR(50) NOT NULL,
+    FOREIGN KEY (fk_filtro) REFERENCES FiltroDashboard(id_filtro)
+);
