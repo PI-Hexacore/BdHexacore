@@ -277,3 +277,5 @@ CREATE TABLE FiltroGenero (
     ds_genero VARCHAR(50) NOT NULL,
     FOREIGN KEY (fk_filtro) REFERENCES FiltroDashboard(id_filtro)
 );
+
+CREATE TABLE IF NOT EXISTS hexacore.webhook ( id_webhook INT NOT NULL, webhook VARCHAR(120) NULL, PRIMARY KEY (id_webhook)) ENGINE = InnoDB;
